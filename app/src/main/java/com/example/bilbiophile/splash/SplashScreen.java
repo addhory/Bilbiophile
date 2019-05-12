@@ -10,7 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.bilbiophile.MainActivity;
+import com.example.bilbiophile.activity.MainActivity;
 import com.example.bilbiophile.R;
 
 
