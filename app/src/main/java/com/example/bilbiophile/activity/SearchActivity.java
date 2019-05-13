@@ -8,7 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -45,17 +47,26 @@ public class SearchActivity extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setupContent();
+        Log.d(TAG, "onCreate: " + getIntent());
         handleIntent(getIntent());
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        handleIntent(intent);
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(getIntent());
+    }
+    @Override
+    public boolean onSearchRequested() {
+        return super.onSearchRequested();
     }
 
     private void handleIntent(Intent intent) {
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            Log.d(TAG, "handleIntent: "+Intent.ACTION_SEARCH.equals(intent.getAction()));
+
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (query == null || query.isEmpty()) { return; }
 
@@ -77,6 +88,16 @@ public class SearchActivity extends AppCompatActivity implements
     public void onPreSearch(int taskId) {
         mProgressBar = new ProgressBarFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.activity_search_progress, mProgressBar).commitAllowingStateLoss();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
