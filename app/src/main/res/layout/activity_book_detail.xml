@@ -17,14 +17,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/detailToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="?attr/colorPrimary"
-            android:elevation="3dp"
-            android:minHeight="?attr/actionBarSize" />
 
         <LinearLayout
             android:id="@+id/llBookLayout"

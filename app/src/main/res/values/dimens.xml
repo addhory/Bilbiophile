@@ -18,5 +18,6 @@
     <dimen name="card_content_area_padding">@dimen/card_padding</dimen>
 
     <dimen name="card_action_area_padding">8dp</dimen>
+    <dimen name="dimen_vertical_margin">8dp</dimen>
 
 </resources>

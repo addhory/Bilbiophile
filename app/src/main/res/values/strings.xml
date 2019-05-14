@@ -25,5 +25,8 @@
     <string name="msg_network_error">Oops! Something wrong with the connection!</string>
 
     <string name="header_chapters">Tracks</string>
+    <string name="favorite">Favorite</string>
+    <string name="remove_fav">Removed From Favorite</string>
+    <string name="add_fav">Added to Favorite</string>
 
 </resources>

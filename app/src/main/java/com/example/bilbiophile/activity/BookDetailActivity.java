@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -19,6 +21,7 @@ import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bilbiophile.R;
 import com.example.bilbiophile.fragment.ProgressBarFragment;
@@ -37,11 +41,15 @@ import com.example.bilbiophile.model.data.AudioInfo;
 import com.example.bilbiophile.model.data.Book;
 import com.example.bilbiophile.model.data.Chapter;
 import com.example.bilbiophile.model.data.RSSBook;
+import com.example.bilbiophile.model.data.db.DatabaseHelper;
+import com.example.bilbiophile.model.data.db.FvBookHelper;
 import com.example.bilbiophile.provider.BookDetailProvider;
 import com.example.bilbiophile.provider.CoverProvider;
 import com.example.bilbiophile.service.MediaPlayerService;
 import com.example.bilbiophile.task.DownloadTask;
 import com.example.bilbiophile.task.JsonParseTask;
+
+import static com.example.bilbiophile.model.data.db.FvDatabaseContract.TABLE_FV;
 
 public class BookDetailActivity extends AppCompatActivity implements
         DownloadTask.OnDownloadListener,
@@ -66,12 +74,19 @@ public class BookDetailActivity extends AppCompatActivity implements
     private TextView mtvTitle;
     //private TextView mtvCreator;
     private TextView mtvDescription;
+    //helper
+    private DatabaseHelper helper;
+    private FvBookHelper fvBookHelper;
+
 
     private ListView mlvChapters;
     private ChapterListAdapter mAdapter;
 
     private ProgressBarFragment mProgressBar;
     private RetryFragment mRetryFragment;
+
+    //boolean fav
+    private Boolean isFavorite = false;
 
     // edia player service
     private MediaPlayerService mPlayer;
@@ -87,18 +102,21 @@ public class BookDetailActivity extends AppCompatActivity implements
         overridePendingTransition(R.anim.book_detail_in, android.R.anim.fade_in);
         setContentView(R.layout.activity_book_detail);
         //getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        fvBookHelper = new FvBookHelper(this);
+        fvBookHelper.open();
+        helper = new DatabaseHelper(this);
 
-        mToolbar = (Toolbar) findViewById(R.id.detailToolbar);
-        mToolbar.inflateMenu(R.menu.menu_book);
-        mmiDone = (MenuItem) mToolbar.getMenu().findItem(R.id.action_done);
-        //mToolbar.setTitle(getString(R.string.activity_book_detail));
-        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+        //mToolbar = (Toolbar) findViewById(R.id.detailToolbar);
+        //mToolbar.inflateMenu(R.menu.menu_book);
+        //mmiDone = (MenuItem) mToolbar.getMenu().findItem(R.id.action_done);
+       // mToolbar.setTitle(getString(R.string.activity_book_detail));
+        /*mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 finish();
                 return true;
             }
-        });
+        });*/
 
         handleIntent();
         setupContent();
@@ -107,7 +125,7 @@ public class BookDetailActivity extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        overridePendingTransition(android.R.anim.fade_out, R.anim.book_detail_out);
+        //overridePendingTransition(android.R.anim.fade_out, R.anim.book_detail_out);
         super.onPause();
     }
 
@@ -128,6 +146,8 @@ public class BookDetailActivity extends AppCompatActivity implements
         mlvChapters.setAdapter(mAdapter);
         mlvChapters.setOnItemClickListener(this);
 
+        isFavorite = checkFav();
+
         CoverProvider coverProvider = new CoverProvider(this);
         coverProvider.setListener(this);
         Bitmap bitmap = coverProvider.getCoverBitmap(mActiveBook, mivCover);
@@ -136,7 +156,7 @@ public class BookDetailActivity extends AppCompatActivity implements
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
-                    applyBitmapPalette(palette);
+//                    applyBitmapPalette(palette);
                 }
             });
         }
@@ -156,7 +176,7 @@ public class BookDetailActivity extends AppCompatActivity implements
         int dominantColor = dominant.getRgb();
         int brightness = Helper.getColorBrightness(dominantColor);
         mllBook.setBackgroundColor(dominantColor);
-        mToolbar.setBackgroundColor(dominantColor);
+//        mToolbar.setBackgroundColor(dominantColor);
 
         Palette.Swatch swatch = null;
         if (brightness < DARK_BRIGHTNESS) {
@@ -199,14 +219,70 @@ public class BookDetailActivity extends AppCompatActivity implements
             textColor = swatch.getRgb();
         }
 
-        mToolbar.setTitleTextColor(dominant.getBodyTextColor());
-        mmiDone.getIcon().setColorFilter(dominant.getBodyTextColor(), PorterDuff.Mode.SRC_IN);
+        //mToolbar.setTitleTextColor(dominant.getBodyTextColor());
+        //mmiDone.getIcon().setColorFilter(dominant.getBodyTextColor(), PorterDuff.Mode.SRC_IN);
         mivCover.setBackgroundColor(textColor);
 
         mtvPubdate.setTextColor(dominant.getTitleTextColor());
         mtvTitle.setTextColor(textColor);
         //mtvCreator.setTextColor(dominant.getTitleTextColor());
         mtvDescription.setTextColor(dominant.getBodyTextColor());
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_book, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (isFavorite) {
+            menu.findItem(R.id.btn_fav).setIcon(R.drawable.ic_favorite_black_24dp);
+        } else {
+            menu.findItem(R.id.btn_fav).setIcon(R.drawable.ic_favorite_border_black_24dp);
+        }
+
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_done:
+                finish();
+                return true;
+
+            case R.id.btn_fav:
+                invalidateOptionsMenu();
+                toggleFavorite(item);
+                return true;
+        }
+        return false;
+    }
+    private boolean checkFav(){
+        SQLiteDatabase sqLiteDatabase= helper.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_FV + " WHERE title = " +"'"+mActiveBook.title+"'";
+        Cursor c = sqLiteDatabase.rawQuery(query,null);
+        if(c.getCount()<=0){
+            c.close();
+            return false;
+
+        }
+        c.close();
+        return true;
+
+    }
+    private void toggleFavorite(MenuItem item) {
+        if (isFavorite) {
+            fvBookHelper.delete(mActiveBook.title);
+            Toast.makeText(this,R.string.remove_fav, Toast.LENGTH_SHORT).show();
+            isFavorite = false;
+        } else {
+            fvBookHelper.insert(mActiveBook);
+            Toast.makeText(this,R.string.add_fav, Toast.LENGTH_SHORT).show();
+            item.setIcon(R.drawable.ic_favorite_border_black_24dp);
+            isFavorite = true;
+        }
     }
 
     private void handleIntent() {
@@ -361,7 +437,7 @@ public class BookDetailActivity extends AppCompatActivity implements
 
         mActiveBook = result;
 
-        mToolbar.setTitle(mActiveBook.creator);
+//        mToolbar.setTitle(mActiveBook.creator);
         //mtvCreator.setText(mActiveBook.creator);
         mtvDescription.setText(Helper.fromHtml(mActiveBook.description));
 

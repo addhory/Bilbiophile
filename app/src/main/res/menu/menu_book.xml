@@ -6,4 +6,10 @@
         android:icon="@drawable/ic_down_24dp"
         android:title="@string/action_done"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/btn_fav"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="@string/favorite"
+        app:showAsAction="always" />
+
 </menu>

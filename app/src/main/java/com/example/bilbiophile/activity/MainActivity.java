@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 
 import com.example.bilbiophile.R;
 import com.example.bilbiophile.fragment.BookFragment;
+import com.example.bilbiophile.fragment.FavoriteFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +72,8 @@ public class MainActivity extends AppCompatActivity
 
     private void setupTabIcons() {
         final int icons[] = new int[] {
-                R.drawable.ic_book_white_24dp
+                R.drawable.ic_book_white_24dp,
+                R.drawable.ic_favorite_border_black_24dp,
                 //R.mipmap.ic_podcast,
                // R.mipmap.ic_blog,
                 //R.mipmap.ic_search
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity
 
         final int selectedIcons[] = new int[] {
                 R.drawable.ic_book_selected_24dp,
+                R.drawable.ic_favorite_black_24dp,
                // R.mipmap.ic_podcast_accent,
                 //R.mipmap.ic_blog_accent,
                 //R.mipmap.ic_search_accent
@@ -102,7 +105,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         mTabLayout.getTabAt(0).setIcon(selectedIcons[0]);
-       // mTabLayout.getTabAt(1).setIcon(icons[1]);
+        mTabLayout.getTabAt(1).setIcon(icons[1]);
         //mTabLayout.getTabAt(2).setIcon(icons[2]);
         //mTabLayout.getTabAt(3).setIcon(icons[3]);
     }
@@ -143,7 +146,8 @@ public class MainActivity extends AppCompatActivity
      * custom viewpager adapter
      */
     class ViewPagerAdapter extends FragmentPagerAdapter {
-        private List<String> mTitleList = new ArrayList<>(Arrays.asList(getString(R.string.tab_new)));
+        private List<String> mTitleList = new ArrayList<>(Arrays.asList(getString(R.string.tab_new),
+                getString(R.string.favorite)));
                 //getString(R.string.tab_podcast),
                 //getString(R.string.tab_blog)));
 
@@ -157,8 +161,8 @@ public class MainActivity extends AppCompatActivity
                 case 0:
                     return new BookFragment();
 
-               // case 1:
-                 //   return new PodcastTabFragment();
+                case 1:
+                    return new FavoriteFragment();
 
                 //case 2:
             //        return new BlogTabFragment();

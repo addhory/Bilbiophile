@@ -62,7 +62,7 @@
         </activity>
 
         <activity
-            android:theme="@style/ThemeBookDetail"
+
             android:label="@string/activity_book_detail"
             android:name=".activity.BookDetailActivity"/>
     </application>
