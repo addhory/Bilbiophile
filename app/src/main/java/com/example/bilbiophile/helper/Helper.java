@@ -30,7 +30,7 @@ public class Helper {
     public static Date stringToDate(String text, String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         try {
-            Date date = (Date) sdf.parse(text);
+            Date date = sdf.parse(text);
             return date;
         } catch (Exception ex) {
             return null;
@@ -103,7 +103,6 @@ public class Helper {
 
         int[] rgb = {Color.red(color), Color.green(color), Color.blue(color)};
 
-        // return 0 - 255
         return (int) Math.sqrt(rgb[0] * rgb[0] * .241 +
                 rgb[1] * rgb[1] * .691 +
                 rgb[2] * rgb[2] * .068);

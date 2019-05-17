@@ -56,7 +56,6 @@ public class BookDetailProvider implements
         if (mDownloadListener != null) {
             task.addListener(mDownloadListener);
         }
-        //task.execute(URL_JSON_METADATA_PREFIX + book.guid);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, URL_JSON_METADATA_PREFIX + book.guid);
 
     }
@@ -71,7 +70,6 @@ public class BookDetailProvider implements
 
         try {
             FileInputStream file = mContext.openFileInput(mBookStart.guid + ".json");
-            //task.execute(file);
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, file);
         } catch (Exception ex) {
             if (mDownloadListener != null) {

@@ -40,9 +40,9 @@ public class RetryFragment extends Fragment {
             }
         });
 
-        ImageView iv = (ImageView) view.findViewById(R.id.ivrIcon);
-        TextView tv = (TextView) view.findViewById(R.id.tvrMessage);
-        Button bt = (Button) view.findViewById(R.id.btrRetry);
+        ImageView iv = view.findViewById(R.id.ivrIcon);
+        TextView tv = view.findViewById(R.id.tvrMessage);
+        Button bt = view.findViewById(R.id.btrRetry);
 
         iv.setImageResource(mIconId);
         tv.setText(mMessage);
@@ -63,8 +63,8 @@ public class RetryFragment extends Fragment {
         return view;
     }
 
-    public static interface OnRetryListener {
-        public void onRetry();
+    public interface OnRetryListener {
+        void onRetry();
     }
 
 }

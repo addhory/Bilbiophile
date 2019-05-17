@@ -22,28 +22,17 @@ public class DownloadTask extends BaseTask<String, Integer, DownloadTask.Downloa
     private String mOutputFileName;
     private List<OnDownloadListener> mListeners = new ArrayList<>();
 
-    /**
-     *
-     * @param context
-     * @param taskId
-     * @param outputFileName
-     */
+
     public DownloadTask(Context context, int taskId, String outputFileName) {
         super(context, taskId);
         this.mOutputFileName = outputFileName;
     }
 
-    /**
-     *
-     * @param listener
-     */
-    public void addListener(OnDownloadListener listener) {
+     void addListener(OnDownloadListener listener) {
         mListeners.add(listener);
     }
 
-    /**
-     *
-     */
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -55,11 +44,7 @@ public class DownloadTask extends BaseTask<String, Integer, DownloadTask.Downloa
         }
     }
 
-    /**
-     *
-     * @param params
-     * @return
-     */
+
     @Override
     protected DownloadResult doInBackground(String... params) {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
@@ -87,7 +72,7 @@ public class DownloadTask extends BaseTask<String, Integer, DownloadTask.Downloa
             InputStream inputStream = conn.getInputStream();
             FileOutputStream fileOutputStream = mContext.openFileOutput(mOutputFileName, Context.MODE_PRIVATE);
 
-            byte data[] = new byte[READ_BUFFER_SIZE];
+            byte[] data = new byte[READ_BUFFER_SIZE];
             int count;
             while ((count = inputStream.read(data)) != -1) {
                 fileOutputStream.write(data, 0, count);
@@ -154,7 +139,7 @@ public class DownloadTask extends BaseTask<String, Integer, DownloadTask.Downloa
 
     public interface OnDownloadListener {
         void onPreDownload(int taskId);
-        public void onPostDownload(int taskId, DownloadResult result);
-        public void onNetworkError(int taskId, String message);
+        void onPostDownload(int taskId, DownloadResult result);
+        void onNetworkError(int taskId, String message);
     }
 }

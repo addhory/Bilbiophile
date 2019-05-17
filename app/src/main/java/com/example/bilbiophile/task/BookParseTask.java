@@ -146,14 +146,6 @@ public class BookParseTask extends BaseTask<InputStream, Void, List<Book>> {
         return item;
     }
 
-    /**
-     *
-     * @param parser
-     * @param tag
-     * @param type
-     * @return
-     * @throws Exception
-     */
     private String readTag(XmlPullParser parser, String tag, int type) throws Exception {
         switch (type) {
             case RSSBook.TYPE_TEXT:
@@ -164,13 +156,7 @@ public class BookParseTask extends BaseTask<InputStream, Void, List<Book>> {
         }
     }
 
-    /**
-     *
-     * @param parser
-     * @param tag
-     * @return
-     * @throws Exception
-     */
+
     private String readTagText(XmlPullParser parser, String tag) throws Exception {
         String result = null;
 
@@ -184,11 +170,7 @@ public class BookParseTask extends BaseTask<InputStream, Void, List<Book>> {
         return result;
     }
 
-    /**
-     *
-     * @param parser
-     * @throws Exception
-     */
+
     private void skip(XmlPullParser parser) throws Exception {
         if (parser.getEventType() != XmlPullParser.START_TAG) {
             throw new IllegalStateException();
@@ -209,8 +191,8 @@ public class BookParseTask extends BaseTask<InputStream, Void, List<Book>> {
     }
 
 
-    public static interface OnBooksParseListener {
-        public void onBooksPreParse(int taskId);
-        public void onBooksPostParse(int taskId, List<Book> result);
+    public interface OnBooksParseListener {
+        void onBooksPreParse(int taskId);
+        void onBooksPostParse(int taskId, List<Book> result);
     }
 }

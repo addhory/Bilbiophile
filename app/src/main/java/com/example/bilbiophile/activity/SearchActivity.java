@@ -72,13 +72,12 @@ public class SearchActivity extends AppCompatActivity implements
 
             SearchParseTask task = new SearchParseTask(this, IdProvider.generateTaskId());
             task.addListener(this);
-            //task.execute(query);
             task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, query);
         }
     }
 
     private void setupContent() {
-        mBookList = (ListView) findViewById(R.id.lsvBooks);
+        mBookList = findViewById(R.id.lsvBooks);
         mAdapter = new BookListAdapter(this, R.id.lsvBooks);
         mBookList.setAdapter(mAdapter);
         mBookList.setOnItemClickListener(this);
@@ -107,7 +106,6 @@ public class SearchActivity extends AppCompatActivity implements
         }
 
         if (result == null) {
-            // error, let onSearchError handles
         } else if (result.size() == 0) {
             RetryFragment retryFragment = new RetryFragment();
             retryFragment.setContent(R.drawable.ic_search_black_24dp, getString(R.string.msg_search_result_empty), false);
@@ -145,11 +143,6 @@ public class SearchActivity extends AppCompatActivity implements
         private CoverProvider mCoverProvider = new CoverProvider(getContext());
         private List<Book> mBooks = new ArrayList<>();
 
-        /**
-         *
-         * @param context
-         * @param resource
-         */
         public BookListAdapter(@NonNull Context context, int resource) {
             super(context, resource);
 
@@ -181,10 +174,10 @@ public class SearchActivity extends AppCompatActivity implements
                 view = inflater.inflate(R.layout.search_item, viewGroup, false);
 
                 holder = new ViewHolder();
-                holder.ivCover = (ImageView) view.findViewById(R.id.ivsCover);
-                holder.tvTitle = (TextView) view.findViewById(R.id.tvsTitle);
-                holder.tvPubdate = (TextView) view.findViewById(R.id.tvsPubdate);
-                holder.tvDescription = (TextView) view.findViewById(R.id.tvsDescription);
+                holder.ivCover = view.findViewById(R.id.ivsCover);
+                holder.tvTitle = view.findViewById(R.id.tvsTitle);
+                holder.tvPubdate = view.findViewById(R.id.tvsPubdate);
+                holder.tvDescription = view.findViewById(R.id.tvsDescription);
 
                 view.setTag(holder);
             } else {

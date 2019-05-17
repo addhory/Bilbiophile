@@ -57,7 +57,6 @@ public class CoverProvider implements
             if (bitmap != null && sImageViewMap.containsKey(result.output)) {
                 ImageView iv = sImageViewMap.get(result.output);
                 if (iv != null && iv.getTag().toString().equals(result.output)) {
-                    //iv.setImageBitmap(bitmap);
                     TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{
                             new ColorDrawable(Color.TRANSPARENT),
                             new BitmapDrawable(mContext.getResources(), bitmap)
@@ -73,13 +72,9 @@ public class CoverProvider implements
             }
         }
 
-        if (sImageViewMap.containsKey(result.output)) {
-            sImageViewMap.remove(result.output);
-        }
+        sImageViewMap.remove(result.output);
 
-        if (sDownloadTaskMap.containsKey(result.output)) {
-            sDownloadTaskMap.remove(result.output);
-        }
+        sDownloadTaskMap.remove(result.output);
     }
 
     @Override
@@ -87,12 +82,7 @@ public class CoverProvider implements
 
     }
 
-    /**
-     *
-     * @param book
-     * @param iv
-     * @return
-     */
+
     public Bitmap getCoverBitmap(Book book, ImageView iv) {
         String guid = book.guid;
 
@@ -107,7 +97,7 @@ public class CoverProvider implements
 
         // found in cached
         if (sCachedCovers.containsKey(guid)) {
-            return (Bitmap) sCachedCovers.get(guid);
+            return sCachedCovers.get(guid);
         }
 
         // try to load from internal storage
@@ -128,7 +118,6 @@ public class CoverProvider implements
         DownloadTask task = new DownloadTask(mContext, IdProvider.generateTaskId() , guid);
         sDownloadTaskMap.put(guid, task);
         task.addListener(this);
-        //task.execute(URL_COVER_SMALL_PREFIX + guid);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, URL_COVER_SMALL_PREFIX + guid);
 
         return null;
@@ -154,32 +143,14 @@ public class CoverProvider implements
             if (task != null) {
                 task.cancel(true);
 
-                if (sImageViewMap.containsKey(guid)) {
-                    sImageViewMap.remove(guid);
-                }
+                sImageViewMap.remove(guid);
                 sDownloadTaskMap.remove(guid);
             }
         }
     }
 
-    /*
-    public static void cancelAllDownloads() {
-        for (String key: sDownloadTaskMap.keySet()) {
-            DownloadTask task = sDownloadTaskMap.get(key);
-            if (task != null) {
-                task.cancel(true);
 
-                if (sImageViewMap.containsKey(key)) {
-                    sImageViewMap.remove(key);
-                }
-            }
-        }
-
-        sDownloadTaskMap.clear();
-    }
-    */
-
-    public static interface OnCoverListener {
-        public void onCoverLoaded(String guid, Bitmap cover, ImageView imageView);
+    public interface OnCoverListener {
+        void onCoverLoaded(String guid, Bitmap cover, ImageView imageView);
     }
 }

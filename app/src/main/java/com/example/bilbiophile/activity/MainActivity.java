@@ -48,19 +48,19 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // setup viewpager
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = findViewById(R.id.viewpager);
         setupViewPager();
 
         // setup tabs
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
         setupTabIcons();
     }
@@ -71,20 +71,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupTabIcons() {
-        final int icons[] = new int[] {
+        final int[] icons = new int[]{
                 R.drawable.ic_book_white_24dp,
                 R.drawable.ic_favorite_border_black_24dp,
-                //R.mipmap.ic_podcast,
-               // R.mipmap.ic_blog,
-                //R.mipmap.ic_search
+
         };
 
-        final int selectedIcons[] = new int[] {
+        final int[] selectedIcons = new int[]{
                 R.drawable.ic_book_selected_24dp,
                 R.drawable.ic_favorite_black_24dp,
-               // R.mipmap.ic_podcast_accent,
-                //R.mipmap.ic_blog_accent,
-                //R.mipmap.ic_search_accent
+
         };
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -106,10 +102,8 @@ public class MainActivity extends AppCompatActivity
 
         mTabLayout.getTabAt(0).setIcon(selectedIcons[0]);
         mTabLayout.getTabAt(1).setIcon(icons[1]);
-        //mTabLayout.getTabAt(2).setIcon(icons[2]);
-        //mTabLayout.getTabAt(3).setIcon(icons[3]);
-    }
 
+    }
 
 
     @Override
@@ -124,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -141,15 +134,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-    /**
-     * custom viewpager adapter
-     */
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private List<String> mTitleList = new ArrayList<>(Arrays.asList(getString(R.string.tab_new),
                 getString(R.string.favorite)));
-                //getString(R.string.tab_podcast),
-                //getString(R.string.tab_blog)));
+
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -164,9 +152,6 @@ public class MainActivity extends AppCompatActivity
                 case 1:
                     return new FavoriteFragment();
 
-                //case 2:
-            //        return new BlogTabFragment();
-//
                 default:
                     return null;
             }

@@ -43,7 +43,7 @@ public class BookFragment extends BaseFragment implements
         if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_books, container, false);
 
-            mRecyclerView = (RecyclerView) mView.findViewById(R.id.book_list);
+            mRecyclerView = mView.findViewById(R.id.book_list);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
 
             BookProvider provider = new BookProvider(getContext());
@@ -73,11 +73,9 @@ public class BookFragment extends BaseFragment implements
         if (mProgressBar != null) {
             getChildFragmentManager().beginTransaction().remove(mProgressBar).commitAllowingStateLoss();
         }
-
         mRetryFragment = new RetryFragment();
         mRetryFragment.setContent(R.drawable.spacebook, getString(R.string.msg_network_error), true);
         getChildFragmentManager().beginTransaction().add(R.id.tab_news_progress, mRetryFragment).commitAllowingStateLoss();
-        //mRetryFragment.setRetryListener(this);
     }
 
     @Override
@@ -152,10 +150,10 @@ public class BookFragment extends BaseFragment implements
 
         public BookHolder(View itemView) {
             super(itemView);
-            ivCover = (ImageView) itemView.findViewById(R.id.ivnCover);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvnTitle);
-            tvPubdate = (TextView) itemView.findViewById(R.id.tvnPubdate);
-            tvDescription = (TextView) itemView.findViewById(R.id.tvnDescription);
+            ivCover = itemView.findViewById(R.id.ivnCover);
+            tvTitle = itemView.findViewById(R.id.tvnTitle);
+            tvPubdate = itemView.findViewById(R.id.tvnPubdate);
+            tvDescription = itemView.findViewById(R.id.tvnDescription);
         }
     }
 }

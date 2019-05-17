@@ -23,7 +23,7 @@ import java.util.List;
 public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
     private static final String TAG = "___SearchParse";
 
-    public static final String URL_SEARCH_FORMAT = "https://archive.org/advancedsearch.php?q=(%s)+AND+collection:(librivoxaudio)&output=rss";
+    private static final String URL_SEARCH_FORMAT = "https://archive.org/advancedsearch.php?q=(%s)+AND+collection:(librivoxaudio)&output=rss";
 
     private List<OnSearchListener> mListeners = new ArrayList<>();
 
@@ -32,31 +32,22 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
         super(context, taskId);
     }
 
-    /**
-     *
-     * @param listener
-     */
+
     public void addListener(OnSearchListener listener) {
         mListeners.add(listener);
     }
 
-    /**
-     *
-     */
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
 
-        for (OnSearchListener listener: mListeners) {
+        for (OnSearchListener listener : mListeners) {
             listener.onPreSearch(mTaskId);
         }
     }
 
-    /**
-     *
-     * @param params
-     * @return
-     */
+
     @Override
     protected List<Book> doInBackground(String... params) {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
@@ -64,7 +55,7 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
         try {
             return parse(params[0]);
         } catch (Exception ex) {
-            for (OnSearchListener listener: mListeners) {
+            for (OnSearchListener listener : mListeners) {
                 listener.onSearchError(mTaskId, mContext.getString(R.string.msg_network_error));
             }
             return null;
@@ -82,7 +73,7 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
         conn.connect();
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
             // unable to connect
-            for (OnSearchListener listener: mListeners) {
+            for (OnSearchListener listener : mListeners) {
                 listener.onSearchError(mTaskId, mContext.getString(R.string.msg_network_error) + " Response code: " + conn.getResponseCode());
             }
             return null;
@@ -101,24 +92,16 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
         }
     }
 
-    /**
-     *
-     * @param result
-     */
     @Override
     protected void onPostExecute(List<Book> result) {
         super.onPostExecute(result);
 
-        for (OnSearchListener listener: mListeners) {
+        for (OnSearchListener listener : mListeners) {
             listener.onPostSearch(mTaskId, result);
         }
     }
 
-    /**
-     *
-     * @param parser
-     * @return
-     */
+
     private List<Book> readFeed(XmlPullParser parser) {
         List<Book> feed = new ArrayList<>();
 
@@ -177,9 +160,9 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
                     String text = readTag(parser, tag, RSSBook.TYPE_TEXT);
                     Date date = Helper.stringToDate(text, RSSBook.TIME_FORMAT_PUBDATE_BOOK);
                     item.pubDate = date.getTime();
-                } catch (Exception ex) {}
-            }
-            else {
+                } catch (Exception ex) {
+                }
+            } else {
                 skip(parser);
             }
         }
@@ -232,9 +215,11 @@ public class SearchParseTask extends BaseTask<String, Void, List<Book>> {
         }
     }
 
-    public static interface OnSearchListener {
-        public void onPreSearch(int taskId);
-        public void onPostSearch(int taskId, List<Book> result);
-        public void onSearchError(int taskId, String message);
+    public interface OnSearchListener {
+        void onPreSearch(int taskId);
+
+        void onPostSearch(int taskId, List<Book> result);
+
+        void onSearchError(int taskId, String message);
     }
 }

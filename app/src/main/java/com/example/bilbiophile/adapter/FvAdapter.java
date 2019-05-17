@@ -73,10 +73,10 @@ public class FvAdapter extends RecyclerView.Adapter<FvAdapter.FvViewHolder> {
         private View itemVieweFv;
         public FvViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivCover = (ImageView) itemView.findViewById(R.id.ivnCover);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvnTitle);
-            tvPubdate = (TextView) itemView.findViewById(R.id.tvnPubdate);
-            tvDescription = (TextView) itemView.findViewById(R.id.tvnDescription);
+            ivCover = itemView.findViewById(R.id.ivnCover);
+            tvTitle = itemView.findViewById(R.id.tvnTitle);
+            tvPubdate = itemView.findViewById(R.id.tvnPubdate);
+            tvDescription = itemView.findViewById(R.id.tvnDescription);
             itemVieweFv=itemView;
         }
 

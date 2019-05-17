@@ -51,12 +51,10 @@ public class MediaPlayerService extends Service implements
 
     private static final int NOTIFICATION_ID = 1808;
     private static final String CHANNEL_ID = "com.cee.cvox.channel.main";
-    public static final String NOTIFICATION_CHANNEL_ID = "com.cee.cvox.notification.channel";
 
     public static final String ACTION_PLAY = "com.cee.cvox.media.player.action.play";
     public static final String ACTION_PAUSE = "com.cee.cvox.media.player.action.pause";
-    //public static final String ACTION_REW = "com.cee.cvox.media.player.action.rew";
-    //public static final String ACTION_FF = "com.cee.cvox.media.player.action.ff";
+
     public static final String ACTION_PREVIOUS = "com.cee.cvox.media.player.action.previous";
     public static final String ACTION_NEXT = "com.cee.cvox.media.player.action.next";
     public static final String ACTION_STOP = "com.cee.cvox.media.player.action.stop";
@@ -344,11 +342,8 @@ public class MediaPlayerService extends Service implements
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         int result = mAudioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            return true;
-        }
+        return result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
 
-        return false;
     }
 
     /**
@@ -677,18 +672,18 @@ public class MediaPlayerService extends Service implements
         mNotificationManager.cancel(NOTIFICATION_ID);
     }
 
-    public static interface OnMediaPlayerServiceListener {
-        public void onMediaStartNew();
-        public void onMediaPlay();
-        public void onMediaSkipToPrevious();
-        public void onMediaSkipToNext();
-        public void onMediaPrepared();
-        public void onMediaPause();
-        public void onMediaResume();
-        public void onMediaComplete();
-        public void onMediaStop();
-        public void onMediaBuffering(int percent);
-        public void onMediaError(int what, int extra);
+    public interface OnMediaPlayerServiceListener {
+        void onMediaStartNew();
+        void onMediaPlay();
+        void onMediaSkipToPrevious();
+        void onMediaSkipToNext();
+        void onMediaPrepared();
+        void onMediaPause();
+        void onMediaResume();
+        void onMediaComplete();
+        void onMediaStop();
+        void onMediaBuffering(int percent);
+        void onMediaError(int what, int extra);
     }
 
 }

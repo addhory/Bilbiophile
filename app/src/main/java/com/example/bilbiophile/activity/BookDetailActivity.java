@@ -62,17 +62,13 @@ public class BookDetailActivity extends AppCompatActivity implements
 
     private Book mActiveBook;
 
-
     private BookDetailProvider mProvider;
 
-    Toolbar mToolbar;
-    MenuItem mmiDone;
     LinearLayout mllBook;
 
     private ImageView mivCover;
     private TextView mtvPubdate;
     private TextView mtvTitle;
-    //private TextView mtvCreator;
     private TextView mtvDescription;
     //helper
     private DatabaseHelper helper;
@@ -101,22 +97,11 @@ public class BookDetailActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         overridePendingTransition(R.anim.book_detail_in, android.R.anim.fade_in);
         setContentView(R.layout.activity_book_detail);
-        //getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
         fvBookHelper = new FvBookHelper(this);
         fvBookHelper.open();
         helper = new DatabaseHelper(this);
 
-        //mToolbar = (Toolbar) findViewById(R.id.detailToolbar);
-        //mToolbar.inflateMenu(R.menu.menu_book);
-        //mmiDone = (MenuItem) mToolbar.getMenu().findItem(R.id.action_done);
-       // mToolbar.setTitle(getString(R.string.activity_book_detail));
-        /*mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                finish();
-                return true;
-            }
-        });*/
 
         handleIntent();
         setupContent();
@@ -125,23 +110,21 @@ public class BookDetailActivity extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        //overridePendingTransition(android.R.anim.fade_out, R.anim.book_detail_out);
         super.onPause();
     }
 
     private void setupContent() {
         mProvider = new BookDetailProvider(this);
 
-        mllBook = (LinearLayout) findViewById(R.id.llBookLayout);
+        mllBook = findViewById(R.id.llBookLayout);
 
-        mivCover = (ImageView) findViewById(R.id.ivdCover);
-        mtvPubdate = (TextView) findViewById(R.id.tvdPubdate);
-        mtvTitle = (TextView) findViewById(R.id.tvdTitle);
-        //mtvCreator = (TextView) findViewById(R.id.tvdCreator);
-        mtvDescription = (TextView) findViewById(R.id.tvdDescription);
+        mivCover = findViewById(R.id.ivdCover);
+        mtvPubdate = findViewById(R.id.tvdPubdate);
+        mtvTitle = findViewById(R.id.tvdTitle);
+        mtvDescription = findViewById(R.id.tvdDescription);
         mtvDescription.setMovementMethod(new ScrollingMovementMethod());
 
-        mlvChapters = (ListView) findViewById(R.id.lvdChapters);
+        mlvChapters = findViewById(R.id.lvdChapters);
         mAdapter = new ChapterListAdapter(this, R.id.lvdChapters, mActiveBook);
         mlvChapters.setAdapter(mAdapter);
         mlvChapters.setOnItemClickListener(this);
@@ -156,13 +139,11 @@ public class BookDetailActivity extends AppCompatActivity implements
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
-//                    applyBitmapPalette(palette);
                 }
             });
         }
 
         String pubDate = Helper.milliToString(mActiveBook.pubDate, RSSBook.TIME_FORMAT_PUBDATE_COMPACT);
-        //mToolbar.setTitle(pubDate);
         mtvTitle.setText(mActiveBook.title);
         mtvPubdate.setText(pubDate);
     }
@@ -176,7 +157,6 @@ public class BookDetailActivity extends AppCompatActivity implements
         int dominantColor = dominant.getRgb();
         int brightness = Helper.getColorBrightness(dominantColor);
         mllBook.setBackgroundColor(dominantColor);
-//        mToolbar.setBackgroundColor(dominantColor);
 
         Palette.Swatch swatch = null;
         if (brightness < DARK_BRIGHTNESS) {
@@ -219,13 +199,10 @@ public class BookDetailActivity extends AppCompatActivity implements
             textColor = swatch.getRgb();
         }
 
-        //mToolbar.setTitleTextColor(dominant.getBodyTextColor());
-        //mmiDone.getIcon().setColorFilter(dominant.getBodyTextColor(), PorterDuff.Mode.SRC_IN);
         mivCover.setBackgroundColor(textColor);
 
         mtvPubdate.setTextColor(dominant.getTitleTextColor());
         mtvTitle.setTextColor(textColor);
-        //mtvCreator.setTextColor(dominant.getTitleTextColor());
         mtvDescription.setTextColor(dominant.getBodyTextColor());
     }
     @Override
@@ -266,7 +243,6 @@ public class BookDetailActivity extends AppCompatActivity implements
         if(c.getCount()<=0){
             c.close();
             return false;
-
         }
         c.close();
         return true;
@@ -434,11 +410,8 @@ public class BookDetailActivity extends AppCompatActivity implements
         if (mProgressBar != null) {
             getSupportFragmentManager().beginTransaction().remove(mProgressBar).commitAllowingStateLoss();
         }
-
         mActiveBook = result;
 
-//        mToolbar.setTitle(mActiveBook.creator);
-        //mtvCreator.setText(mActiveBook.creator);
         mtvDescription.setText(Helper.fromHtml(mActiveBook.description));
 
         if (mAdapter != null) {
@@ -483,10 +456,9 @@ public class BookDetailActivity extends AppCompatActivity implements
         switch (chapter.playbackState) {
             case AudioInfo.AI_IDLE:
                 Intent intent = new Intent(this, MediaPlayerService.class);
-                AudioInfo audioInfo = (AudioInfo) chapter;
+                AudioInfo audioInfo = chapter;
                 intent.putExtra("audio", audioInfo);
                 startService(intent);
-                //ContextCompat.startForegroundService(this, intent);
                 if (!bServiceBound) {
                     bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
                 }
@@ -495,20 +467,20 @@ public class BookDetailActivity extends AppCompatActivity implements
                     mPendingActive.playbackState = AudioInfo.AI_IDLE;
                 }
                 mPendingActive = chapter;
-                ((AudioInfo) chapter).playbackState = AudioInfo.AI_PLAYING;
+                chapter.playbackState = AudioInfo.AI_PLAYING;
                 break;
 
             case AudioInfo.AI_PLAYING:
                 if (mPlayer != null) {
                     mPlayer.pauseMedia();
-                    ((AudioInfo) chapter).playbackState = AudioInfo.AI_PAUSE;
+                    chapter.playbackState = AudioInfo.AI_PAUSE;
                 }
                 break;
 
             case AudioInfo.AI_PAUSE:
                 if (mPlayer != null) {
                     mPlayer.resumeMedia();
-                    ((AudioInfo) chapter).playbackState = AudioInfo.AI_PLAYING;
+                    chapter.playbackState = AudioInfo.AI_PLAYING;
                 }
                 break;
         }
@@ -574,10 +546,10 @@ public class BookDetailActivity extends AppCompatActivity implements
                 view = inflater.inflate(R.layout.chapter_item, viewGroup, false);
 
                 viewHolder = new ViewHolder();
-                viewHolder.tvTitle = (TextView) view.findViewById(R.id.tvcTitle);
-                viewHolder.tvDuration = (TextView) view.findViewById(R.id.tvcDuration);
-                viewHolder.tvSize = (TextView) view.findViewById(R.id.tvcSize);
-                viewHolder.ivPlayPause = (ImageView) view.findViewById(R.id.ivcPlayPause);
+                viewHolder.tvTitle = view.findViewById(R.id.tvcTitle);
+                viewHolder.tvDuration = view.findViewById(R.id.tvcDuration);
+                viewHolder.tvSize = view.findViewById(R.id.tvcSize);
+                viewHolder.ivPlayPause = view.findViewById(R.id.ivcPlayPause);
 
                 view.setTag(viewHolder);
             } else {

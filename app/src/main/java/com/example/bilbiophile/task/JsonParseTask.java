@@ -12,6 +12,7 @@ import com.example.bilbiophile.model.data.Chapter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,53 +20,42 @@ import java.util.List;
 
 public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
     private static final String TAG = "___JsonParse";
-    public static final String URL_DOWNLOAD_PREFIX = "https://archive.org/download/";
-
-    public static final String JSON_TIME_FORMAT_PUBDATE_BOOK = "yyyy-MM-d HH:mm:ss";
-
-    public static final String JSON_FILES = "files";    // array
-    public static final String JSON_FILES_NAME = "name";
-    public static final String JSON_FILES_SOURCE = "source";
-    public static final String JSON_FILES_TITLE = "title";
-    public static final String JSON_FILES_TRACK = "track";
-    public static final String JSON_FILES_SIZE = "size";
-    public static final String JSON_FILES_LENGTH = "length";
-    public static final String JSON_FILES_ARTIST = "artist";
-
-    public static final String JSON_METADATA = "metadata";  // object
-    public static final String JSON_METADATA_CREATOR = "creator";
-    public static final String JSON_METADATA_DESCRIPTION = "description";
-    public static final String JSON_METADATA_PUBDATE = "publicdate";
-    public static final String JSON_METADATA_RUNTIME = "runtime";
+    private static final String URL_DOWNLOAD_PREFIX = "https://archive.org/download/";
 
 
-    public static final String JSON_REVIEWS = "reviews";  // array
+    private static final String JSON_FILES = "files";    // array
+    private static final String JSON_FILES_NAME = "name";
+    private static final String JSON_FILES_SOURCE = "source";
+    private static final String JSON_FILES_TITLE = "title";
+    private static final String JSON_FILES_TRACK = "track";
+    private static final String JSON_FILES_SIZE = "size";
+    private static final String JSON_FILES_LENGTH = "length";
+    private static final String JSON_FILES_ARTIST = "artist";
+
+    private static final String JSON_METADATA = "metadata";  // object
+    private static final String JSON_METADATA_CREATOR = "creator";
+    private static final String JSON_METADATA_DESCRIPTION = "description";
+    private static final String JSON_METADATA_PUBDATE = "publicdate";
+    private static final String JSON_METADATA_RUNTIME = "runtime";
+
+
 
 
     private List<OnJsonParseListener> mListeners = new ArrayList<>();
     private Book mBook;
 
-    /**
-     *
-     * @param context
-     * @param taskId
-     */
+
     public JsonParseTask(Context context, int taskId, Book book) {
         super(context, taskId);
         this.mBook = book;
     }
 
-    /**
-     *
-     * @param listener
-     */
+
     public void addListener(OnJsonParseListener listener) {
         mListeners.add(listener);
     }
 
-    /**
-     *
-     */
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
@@ -75,11 +65,7 @@ public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
         }
     }
 
-    /**
-     *
-     * @param params
-     * @return
-     */
+
     @Override
     protected Book doInBackground(InputStream... params) {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
@@ -94,14 +80,9 @@ public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
         }
     }
 
-    /**
-     *
-     * @param ins
-     * @return
-     * @throws IOException
-     */
+
     private Book parse(InputStream ins) throws Exception {
-        JsonReader reader = new JsonReader(new InputStreamReader(ins, "UTF-8"));
+        JsonReader reader = new JsonReader(new InputStreamReader(ins, StandardCharsets.UTF_8));
         try {
             return readBookObject(reader);
         } finally {
@@ -110,12 +91,7 @@ public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
         }
     }
 
-    /**
-     *
-     * @param reader
-     * @return
-     * @throws IOException
-     */
+
     public Book readBookObject(JsonReader reader) throws IOException {
         reader.beginObject();
 
@@ -257,20 +233,11 @@ public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
         // re-update mBook
         mBook.creator = fCreator;
         mBook.description = fDescription;
-        /*
-        // ignore pubdate for now
-        try {
-            Date date = Helper.stringToDate(fPubdate, JSON_TIME_FORMAT_PUBDATE_BOOK);
-            mBook.pubDate = date.getTime();
-        } catch (Exception ex) {}
-        */
+
         mBook.runtime = fRuntime;
     }
 
-    /**
-     *
-     * @param result
-     */
+
     @Override
     protected void onPostExecute(Book result) {
         super.onPostExecute(result);
@@ -281,10 +248,10 @@ public class JsonParseTask extends BaseTask<InputStream, Void, Book> {
     }
 
 
-    public static interface OnJsonParseListener {
-        public void onPreJsonParse(int taskId);
-        public void onPostJsonParse(int taskId, Book result);
-        public void onJsonParseError(int taskId, String message);
+    public interface OnJsonParseListener {
+        void onPreJsonParse(int taskId);
+        void onPostJsonParse(int taskId, Book result);
+        void onJsonParseError(int taskId, String message);
     }
 }
 

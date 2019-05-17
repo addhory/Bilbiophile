@@ -36,20 +36,16 @@ public class FavoriteFragment extends BaseFragment implements
 
     RecyclerView recyclerView;
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (mView == null) {
             mView = inflater.inflate(R.layout.fragment_favorite, container, false);
-            recyclerView = (RecyclerView) mView.findViewById(R.id.rv_listFav);
+            recyclerView = mView.findViewById(R.id.rv_listFav);
             recyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
 
             BookProvider provider = new BookProvider(getContext());
             provider.setDownloadListener(this);
             provider.setParseListener(this);
-
-
 
             fvAdapter = new FvAdapter(getContext());
             fvAdapter.setListBk(bookArrayList);
@@ -58,25 +54,15 @@ public class FavoriteFragment extends BaseFragment implements
 
         return mView;
     }
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }*/
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //recyclerView.setHasFixedSize(true);
-
 
         fvBookHelper=new FvBookHelper(getContext());
         fvBookHelper.open();
 
         new LoadBookAsync().execute();
-
 
         swipeRefreshLayout = mView.findViewById(R.id.swipeRefreshFav);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -86,8 +72,6 @@ public class FavoriteFragment extends BaseFragment implements
 
             }
         });
-
-
     }
 
     @Override
