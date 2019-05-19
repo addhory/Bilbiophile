@@ -26,7 +26,6 @@ import java.util.List;
 public class BookFragment extends BaseFragment implements
         DownloadTask.OnDownloadListener,
         BookParseTask.OnBooksParseListener {
-    private static final String TAG = "___NewsTab";
 
     private RecyclerView mRecyclerView;
     private BookListAdapter mAdapter;
